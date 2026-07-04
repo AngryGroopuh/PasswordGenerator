@@ -53,7 +53,7 @@ def criteria_counts(password):
     return char_counts
 
 def validate_specials(special_input):
-    error_message = ""
+    special_error_message = ""
     valid_specials = ""
     invalid_specials = ""
 
@@ -73,8 +73,8 @@ def validate_specials(special_input):
                 valid_specials += character
 
     if invalid_specials:
-        error_message = 'Invalid special character'
-        return False, error_message, "", ""
+        special_error_message = 'Invalid special character'
+        return False, special_error_message, "", ""
 
-    return True, error_message, valid_specials, valid_specials
+    return True, special_error_message, valid_specials, valid_specials
 

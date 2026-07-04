@@ -12,10 +12,10 @@ def get_pw_options():
     entered_specials = specials_entry.get()
     error_messages = ''
     
-    is_valid, error_message, special_characters, required_specials = password_tools.validate_specials(entered_specials)
+    is_valid, special_error_message, special_characters, required_specials = password_tools.validate_specials(entered_specials)
 
-    if error_message:
-        error_messages += error_message
+    if special_error_message:
+        error_messages += special_error_message
 
     min_length = 4
     if special_characters != '' and required_specials == '':
@@ -29,11 +29,14 @@ def get_pw_options():
          length = default_length
 
     elif not length.isdigit():
-        error_messages += '\nLength must be a number'
+        error_messages = 'Length must be a number\n' + error_messages
         return False, error_messages, None, None, None, None, None
 
     elif length.isdigit():
         length = int(length)
+
+
+
 
     return is_valid, error_messages, length, numbers, special_characters, required_specials, min_length
 
@@ -49,6 +52,7 @@ def generate_password(keypress=None):
     
     if length < min_length:
         status_label.config(text=f'Password must be at least {min_length} with current options.\n', foreground='red')
+        generated_pw.config(text='')
         return
     
     password = password_tools.generate_pw(length, numbers, special_characters, required_specials)

@@ -73,7 +73,8 @@ def validate_specials(special_input):
                 valid_specials += character
 
     if invalid_specials:
-        return False,'Invalid character', "", ""
+        error_message = 'Invalid special character'
+        return False, error_message, "", ""
 
     return True, error_message, valid_specials, valid_specials
 

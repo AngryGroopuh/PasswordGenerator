@@ -2,8 +2,35 @@
 
 import tkinter as tk
 import password_tools
+import json
+from pathlib import Path
+
+parent_dir = Path(__file__).parent
+json_file = parent_dir / 'json' / 'gui_settings.json'
+
 
 default_length = 16
+
+def load_settings():
+    if not json_file.exists():
+        return
+    
+    with open(json_file, 'r') as json_settings:
+        settings = json.load(json_settings)
+
+        length_entry.insert(0, settings['length'])
+        specials_entry.insert(0, settings['specials'])
+        numbers_var.set(settings['use_numbers'])
+
+
+def save_settings():
+    current_settings = {"length": length_entry.get(),
+                        "use_numbers": numbers_var.get(),
+                        "specials": specials_entry.get()}
+    
+    with open(json_file, 'w') as json_settings:
+        settings = json.dump(current_settings, json_settings, indent=4)
+
 
 
 def get_pw_options():
@@ -39,7 +66,6 @@ def get_pw_options():
 
 
     return is_valid, error_messages, length, numbers, special_characters, required_specials, min_length
-
 def generate_password(keypress=None):
 
     is_valid, error_messages, length, numbers, special_characters, required_specials, min_length = get_pw_options()
@@ -67,14 +93,6 @@ def generate_password(keypress=None):
 
     char_counts_label.config(text=counts_text)
 
-
-
-
-
-
-
-
-
 def copy_password(keypress=None):
     password = generated_pw.cget('text')  
     if password == '':
@@ -83,7 +101,6 @@ def copy_password(keypress=None):
     window.clipboard_clear()
     window.clipboard_append(password)
     status_label.config(text='Password copied to clipboard!', foreground='blue')
-
 def show_specials_help(event=None):
     status_label.config(text="Empty = all punctuation, none = no specials, or type allowed specials like !@#", foreground='gray')
 def show_password_help(event=None):
@@ -92,20 +109,10 @@ def show_generate_help(event=None):
     status_label.config(text='Press "Enter" at any time to generate password. \n default fields produce a unique string with 2 of each character type.', foreground='gray')
 def clear_status(event=None):
     status_label.config(text="")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def on_close():
+    if soc_var.get() == True:
+        save_settings()
+    window.destroy()
 
 window = tk.Tk()
 window.title('Password Generator')
@@ -124,6 +131,8 @@ form_frame2.pack()
 
 form_frame3 = tk.Frame(window)
 form_frame3.pack()
+
+
 
 # -----------------GRID 1-----------------------------------------
 length_label = tk.Label(form_frame2, text='Length ', background='gray', foreground='white')
@@ -150,6 +159,16 @@ generate_button = tk.Button(form_frame2, text='Generate', command=generate_passw
 generate_button.grid(row=1, column=2, sticky='e', padx=10)
 generate_button.bind('<Enter>', show_generate_help)
 generate_button.bind('<Leave>', clear_status)
+
+soc_var = tk.BooleanVar(value=False)
+soc_label = tk.Label(form_frame2, text='Save settings on close ', background='gray', foreground='white')
+soc_label.grid(row=2, column=2, sticky='e')
+soc_check = tk.Checkbutton(form_frame2, variable=soc_var, background='gray', highlightbackground='gray')
+soc_check.grid(row=2, column=3, sticky='w')
+
+
+
+
 # ----------------------------------------------------------------
 # -----------------GRID 2-----------------------------------------
 password_label = tk.Label(form_frame3, text='Password: ')
@@ -163,11 +182,20 @@ generated_pw.bind('<Leave>', clear_status)
 
 copy_button = tk.Button(form_frame3, text='Copy', command=copy_password)
 copy_button.grid(row=0, column=4, padx=10)
+
+
+
 # ----------------------------------------------------------------
 status_label = tk.Label(window, text='')
 status_label.pack()
 
+
+
 char_counts_label = tk.Label(window, text='')
 char_counts_label.pack(pady=10)
 
+
+load_settings()
+window.protocol("WM_DELETE_WINDOW", on_close)
 window.mainloop()
+

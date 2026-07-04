@@ -12,7 +12,7 @@ def generate_password(keypress=None):
     if not is_valid:
         status_label.config(text='Invalid special characters', foreground='red')
         generated_pw.config(text='')
-        # char_counts_label.config(text='')
+        char_counts_label.config(text='')
         return
 
     numbers = numbers_var.get()
@@ -37,12 +37,12 @@ def generate_password(keypress=None):
     elif not length.isdigit():
         status_label.config(text='Length must be a number', foreground='red')
         generated_pw.config(text='')
-        # char_counts_label.config(text='')
+        char_counts_label.config(text='')
         return
     elif int(length) < min_length:
         status_label.config(text=f'With current selections, length must a minimum of {min_length}', foreground='red')
         generated_pw.config(text='')
-        # char_counts_label.config(text='')
+        char_counts_label.config(text='')
         return
     elif length.isdigit():
         length = int(length)
@@ -59,7 +59,7 @@ def generate_password(keypress=None):
     for char_type, count in counts.items():
         counts_text += f'{char_type}: {count}\n'
 
-    # char_counts_label.config(text=counts_text)
+    char_counts_label.config(text=counts_text)
 
 def copy_password(keypress=None):
     password = generated_pw.cget('text')  
@@ -116,7 +116,7 @@ def clear_status(event=None):
 
 window = tk.Tk()
 window.title('Password Generator')
-window.geometry('650x350')
+window.geometry('650x400')
 window.bind('<Return>', func=generate_password)
 window.bind('<Control-c>', copy_password)
 
@@ -178,8 +178,8 @@ copy_button.grid(row=0, column=4, padx=10)
 status_label = tk.Label(window, text='')
 status_label.pack()
 
-# char_counts_label = tk.Label(window, text='')
-# char_counts_label.pack(pady=10)
+char_counts_label = tk.Label(window, text='')
+char_counts_label.pack(pady=10)
 
 
 

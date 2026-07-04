@@ -53,14 +53,15 @@ def criteria_counts(password):
     return char_counts
 
 def validate_specials(special_input):
+    error_message = ""
     valid_specials = ""
     invalid_specials = ""
 
     if special_input.lower() == "none":
-        return True, "", ""
+        return True, "", "", ""
 
     if special_input == "":
-        return True, string.punctuation, ""
+        return True, "", string.punctuation, ""
 
     for character in special_input:
         if character not in valid_specials:
@@ -72,9 +73,7 @@ def validate_specials(special_input):
                 valid_specials += character
 
     if invalid_specials:
-        return False, "", ""
+        return False,'Invalid character', "", ""
 
-    return True, valid_specials, valid_specials
-
-
+    return True, error_message, valid_specials, valid_specials
 

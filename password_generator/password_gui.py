@@ -5,17 +5,41 @@ import password_tools
 
 default_length = 16
 
-def generate_password(keypress=None):
 
+def get_pw_options():
+    length_error = ''
+    length = length_entry.get()
+    numbers = numbers_var.get()
+    entered_specials = specials_entry.get()
+    
+    is_valid, error_message, special_characters, required_specials = password_tools.validate_specials(entered_specials)
+
+    min_length = 4
+    if special_characters != '' and required_specials == '':
+        min_length += 2
+    else:
+        min_length += len(required_specials)
+    if numbers:
+        min_length += 2
+
+    if length == '':
+         length = default_length
+
+    elif not length.isdigit():
+        return False, 'Length must be a number', None, None, None, None, None
+
+    elif length.isdigit():
+        length = int(length)
+
+    return is_valid, error_message, length, numbers, special_characters, required_specials, min_length
+
+
+
+def show_length_help(event=None):
+    length = length_entry.get()
+    numbers = numbers_var.get()
     entered_specials = specials_entry.get()
     is_valid, special_characters, required_specials = password_tools.validate_specials(entered_specials)
-    if not is_valid:
-        status_label.config(text='Invalid special characters', foreground='red')
-        generated_pw.config(text='')
-        char_counts_label.config(text='')
-        return
-
-    numbers = numbers_var.get()
 
     min_length = 4
 
@@ -27,30 +51,34 @@ def generate_password(keypress=None):
     if numbers:
         min_length += 2
 
-    length = length_entry.get()
-
     if length == '':
-        if min_length <= default_length:
-            length = default_length
-        else:
-            length = min_length
+         length = default_length
     elif not length.isdigit():
         status_label.config(text='Length must be a number', foreground='red')
-        generated_pw.config(text='')
-        char_counts_label.config(text='')
         return
     elif int(length) < min_length:
         status_label.config(text=f'With current selections, length must a minimum of {min_length}', foreground='red')
-        generated_pw.config(text='')
-        char_counts_label.config(text='')
         return
     elif length.isdigit():
         length = int(length)
 
+    if min_length <= default_length:
+        status_label.config(text=f'Empty = default length {default_length}. \n(Minimum {min_length} with current options)', foreground='gray')
+    elif min_length >= default_length:
+        status_label.config(text=f'Empty = default {min_length} with current options', foreground='gray')
+
+def generate_password(keypress=None):
+
+    is_valid, error_message, length, numbers, special_characters, required_specials, min_length = get_pw_options()
+
+    if not is_valid:
+        status_label.config(text=error_message, foreground='red')
+        generated_pw.config(text='')
+        char_counts_label.config(text='')
+        return
 
     password = password_tools.generate_pw(length, numbers, special_characters, required_specials)
 
-    
     generated_pw.config(text=password)
     status_label.config(text='Password generated!', foreground='blue')
 
@@ -70,40 +98,16 @@ def copy_password(keypress=None):
     window.clipboard_append(password)
     status_label.config(text='Password copied to clipboard!', foreground='blue')
 
-def show_length_help(event=None):
 
-    entered_specials = specials_entry.get()
-    is_valid, special_characters, required_specials = password_tools.validate_specials(entered_specials)
 
-    numbers = numbers_var.get()
 
-    min_length = 4
 
-    if special_characters !='' and required_specials == '':
-        min_length += 2
-    else:
-        min_length += len(required_specials)
 
-    if numbers:
-        min_length += 2
 
-    length = length_entry.get()
 
-    if length == '':
-         length = default_length
-    elif not length.isdigit():
-        status_label.config(text='Length must be a number', foreground='red')
-        return
-    elif int(length) < min_length:
-        status_label.config(text=f'With current selections, length must a minimum of {min_length}', foreground='red')
-        return
-    elif length.isdigit():
-        length = int(length)
 
-    if min_length <= default_length:
-        status_label.config(text=f'Empty = default length {default_length}. \n(Minimum {min_length} with current options)', foreground='gray')
-    elif min_length >= default_length:
-        status_label.config(text=f'Empty = default {min_length} with current options', foreground='gray')
+
+
 
 def show_specials_help(event=None):
     status_label.config(text="Empty = all punctuation, none = no specials, or type allowed specials like !@#", foreground='gray')
@@ -113,6 +117,20 @@ def show_generate_help(event=None):
     status_label.config(text='Click or press enter to generate password. \n default fields produce a unique string with 2 of each character type.', foreground='gray')
 def clear_status(event=None):
     status_label.config(text="")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 window = tk.Tk()
 window.title('Password Generator')
@@ -180,10 +198,5 @@ status_label.pack()
 
 char_counts_label = tk.Label(window, text='')
 char_counts_label.pack(pady=10)
-
-
-
-
-
 
 window.mainloop()

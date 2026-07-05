@@ -4,12 +4,15 @@ import tkinter as tk
 import password_tools
 import json
 from pathlib import Path
+from platformdirs import user_config_dir
 
-parent_dir = Path(__file__).parent
-json_file = parent_dir / 'json' / 'gui_settings.json'
+settings_dir = Path(user_config_dir("PasswordGenerator"))
+settings_dir.mkdir(parents=True, exist_ok=True)
+
+json_file = settings_dir / 'gui_settings.json'
 
 
-default_length = 16
+
 
 def load_settings():
     if not json_file.exists():
@@ -53,7 +56,7 @@ def get_pw_options():
         min_length += 2
 
     if length == '':
-         length = default_length
+         length = DEFAULT_LENGTH
 
     elif not length.isdigit():
         error_messages = 'Length must be a number\n' + error_messages
@@ -117,6 +120,7 @@ def on_close():
 window = tk.Tk()
 window.title('Password Generator')
 window.geometry('650x400')
+DEFAULT_LENGTH = 16
 window.bind('<Return>', func=generate_password)
 window.bind('<Control-c>', copy_password)
 

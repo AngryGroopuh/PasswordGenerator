@@ -1,11 +1,12 @@
 import string
 import secrets
 
+
 def generate_pw(length, numbers=True, special_characters='', required_specials=''):
     lowercase = string.ascii_lowercase
     uppercase = string.ascii_uppercase
     digits = string.digits
-    
+
     characters = lowercase + uppercase
 
     pwd = [
@@ -25,7 +26,7 @@ def generate_pw(length, numbers=True, special_characters='', required_specials='
             for char in required_specials:
                 pwd.append(char)
                 characters += char
-        else:        
+        else:
             characters += special_characters
             pwd.append(secrets.choice(special_characters))
             pwd.append(secrets.choice(special_characters))
@@ -37,8 +38,9 @@ def generate_pw(length, numbers=True, special_characters='', required_specials='
 
     return ''.join(pwd)
 
+
 def criteria_counts(password):
-    char_counts = {'Uppercase':0, 'Lowercase':0, 'Numbers':0, 'Specials':0}
+    char_counts = {'Uppercase': 0, 'Lowercase': 0, 'Numbers': 0, 'Specials': 0}
 
     for char in password:
         if char in string.ascii_uppercase:
@@ -51,6 +53,7 @@ def criteria_counts(password):
             char_counts['Specials'] += 1
 
     return char_counts
+
 
 def validate_specials(special_input):
     special_error_message = ""
@@ -77,4 +80,3 @@ def validate_specials(special_input):
         return False, special_error_message, "", ""
 
     return True, special_error_message, valid_specials, valid_specials
-

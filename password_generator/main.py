@@ -2,6 +2,7 @@ import string
 import secrets
 import password_tools
 
+
 def banner():
     print('\n\n')
     print('                  ~| PASSWORD GENERATOR |~')
@@ -10,9 +11,10 @@ def banner():
     print('*If special characters are provided, the password will contain each ')
     print(' character at least once, and default characters will be ignored.\n')
 
+
 def get_has_number():
-    while True:  
-        has_number = input('Include numbers? (Y/n): ').lower()  
+    while True:
+        has_number = input('Include numbers? (Y/n): ').lower()
         if has_number == '' or has_number == 'y':
             return True
         elif has_number == 'n':
@@ -20,11 +22,12 @@ def get_has_number():
         elif has_number not in ('y', 'n'):
             print('Invalid. Please enter "y", "n", or press enter for default.')
 
+
 def get_specials():
     while True:
         valid_specials = ''
         invalid_specials = ''
-        
+
         special_input = input('Special characters (Enter=default, none=off): ')
 
         if special_input.lower() == 'none':
@@ -39,7 +42,7 @@ def get_specials():
                 if character == ' ':
                     valid_specials += character
                 elif character not in string.punctuation:
-                    invalid_specials += character      
+                    invalid_specials += character
                 else:
                     valid_specials += character
 
@@ -55,6 +58,7 @@ def get_specials():
 
     return valid_specials, special_chars
 
+
 def get_pw_length(has_number, special_chars, valid_specials):
     while True:
         minimum_required = 4
@@ -67,8 +71,9 @@ def get_pw_length(has_number, special_chars, valid_specials):
                 minimum_required += 2
             else:
                 minimum_required += len(valid_specials)
-                
-        length = input(f"Password length ('Enter' for min. {minimum_required}): ")
+
+        length = input(
+            f"Password length ('Enter' for min. {minimum_required}): ")
 
         if length == '':
             length = minimum_required
@@ -84,22 +89,22 @@ def get_pw_length(has_number, special_chars, valid_specials):
 
 banner()
 while True:
-    
+
     has_number = get_has_number()
 
     valid_specials, special_chars = get_specials()
 
     length = get_pw_length(has_number, special_chars, valid_specials)
 
-    pwd = password_tools.generate_pw(length, has_number, special_chars, valid_specials)
+    pwd = password_tools.generate_pw(
+        length, has_number, special_chars, valid_specials)
     print(f"\n\nPassword:\n{pwd}\n\n")
 
     char_counts = password_tools.criteria_counts(pwd)
     for char, count in char_counts.items():
         print(f"{char}: {count}")
 
-    rerun = input('\n\nPress "Enter" to generate another password ("q" to quit): ')
+    rerun = input(
+        '\n\nPress "Enter" to generate another password ("q" to quit): ')
     if rerun.lower() == 'q':
         break
-
-
